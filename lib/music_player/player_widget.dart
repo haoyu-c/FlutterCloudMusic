@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'package:FlutterCloudMusic/model/song.dart';
+import 'package:FlutterCloudMusic/network/network.dart';
 import 'package:FlutterCloudMusic/util/cmimage.dart';
 import 'package:FlutterCloudMusic/util/cmtext.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:math';
@@ -9,15 +12,15 @@ import 'dart:math';
 enum PlayerState { stopped, playing, paused }
 
 class PlayerWidget extends StatefulWidget {
-  final String url;
+  final Song song;
 
   const PlayerWidget({
     Key key,
-    @required this.url,
+    @required this.song,
   }) : super(key: key);
 
   @override
-  _PlayerWidgetState createState() => _PlayerWidgetState(url);
+  _PlayerWidgetState createState() => _PlayerWidgetState();
 }
 
 class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderStateMixin {
@@ -28,7 +31,6 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
   Duration _position;
 
   PlayerState _playerState = PlayerState.stopped;
-  StreamSubscription _durationSubscription;
   StreamSubscription _positionSubscription;
   StreamSubscription _playerCompleteSubscription;
   StreamSubscription _playerErrorSubscription;
@@ -41,7 +43,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
   get _positionText => toSongDurationString(_position);
 
 
-  _PlayerWidgetState(this.url);
+  _PlayerWidgetState();
   
 
   @override
@@ -109,7 +111,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
                 children: [
                   CMImage.named("cd_bg", width: 1.sw - 40, height: 1.sw - 40),
                   ClipOval(
-                    child: CMImage.named("chengdu", suffix: "jpg", width: (1.sw - 40) / 1.6, height: (1.sw - 40) / 1.6),
+                    child: CachedNetworkImage(imageUrl: widget.song.imgUrl, width: (1.sw - 40) / 1.6, height: (1.sw - 40) / 1.6),
                   )
                 ]
               ),
@@ -182,11 +184,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
 
   _initAudioPlayer() {
     _audioPlayer = AudioPlayer(mode: PlayerMode.MEDIA_PLAYER);
-    _durationSubscription = _audioPlayer.onDurationChanged.listen((duration) {
-      setState(() {
-        _duration = duration;
-      });
-    });
+    _duration = Duration(seconds: widget.song.duration);
     _positionSubscription = _audioPlayer.onAudioPositionChanged.listen((position) {
       setState(() {
         _position = position;
@@ -201,6 +199,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
     });
     _playerErrorSubscription = _audioPlayer.onPlayerError.listen((msg) {
       setState(() {
+        print(msg);
         _playerState = PlayerState.stopped;
         _duration = Duration(seconds: 0);
         _position = Duration(seconds: 0);
@@ -208,13 +207,21 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
     });
     _playerControlCommandSubscription =
         _audioPlayer.onPlayerCommand.listen((command) {
-      print('command');
+          print("command");
     });
     _audioPlayer.onPlayerStateChanged.listen((state) {
       if (!mounted) return;
       setState(() {
         _audioPlayerState = state;
+        if (state == AudioPlayerState.PLAYING) {
+          control.repeat();
+        } else {
+          control.stop();
+        }
       });
+    });
+    _audioPlayer.onSeekComplete.listen((s) {
+      
     });
     _audioPlayer.onNotificationPlayerStateChanged.listen((state) {
       if (!mounted) return;
@@ -235,10 +242,13 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
             _position.inMilliseconds < _duration.inMilliseconds)
         ? _position
         : null;
-    final result = await _audioPlayer.play(url, position: playPosition);
-    if (result == 1) setState(() => _playerState = PlayerState.playing);
-    _audioPlayer.setPlaybackRate(playbackRate: 1.0);
-    control.repeat();
+    final result = await _audioPlayer.play(widget.song.songUrl, position: playPosition);
+      setState(() {
+        if (result == 1) {
+          _playerState = PlayerState.playing;
+          _audioPlayer.setPlaybackRate(playbackRate: 1.0);
+        }
+      });
     return result;
   }
 
@@ -252,12 +262,12 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
   @override
   void dispose() {
     _audioPlayer.dispose();
-    _durationSubscription.cancel();
     _positionSubscription.cancel();
     _playerCompleteSubscription.cancel();
     _playerErrorSubscription?.cancel();
     _playerStateSubscription?.cancel();
     _playerControlCommandSubscription?.cancel();
+    control.dispose();
     super.dispose();
   }
 

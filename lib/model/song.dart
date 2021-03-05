@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:FlutterCloudMusic/model/artist.dart';
 
 class Song {
@@ -7,14 +8,17 @@ class Song {
   String songUrl;
   String name;
   String lyricUrl;
-  String createdAt;
+  int duration;
+  String imgUrl;
+
   Song({
     this.id,
     this.artist,
     this.songUrl,
     this.name,
     this.lyricUrl,
-    this.createdAt,
+    this.duration,
+    this.imgUrl,
   });
 
   Map<String, dynamic> toMap() {
@@ -24,7 +28,8 @@ class Song {
       'songUrl': songUrl,
       'name': name,
       'lyricUrl': lyricUrl,
-      'createdAt': createdAt,
+      'duration': duration,
+      'imgUrl': imgUrl,
     };
   }
 
@@ -35,7 +40,8 @@ class Song {
       'songUrl': songUrl,
       'name': name,
       'lyricUrl': lyricUrl,
-      'createdAt': createdAt,
+      'duration': duration,
+      'imgUrl': imgUrl
     };
   }
 
@@ -48,7 +54,8 @@ class Song {
       songUrl: map['songUrl'],
       name: map['name'],
       lyricUrl: map['lyricUrl'],
-      createdAt: map['createdAt'],
+      duration: map['duration'],
+      imgUrl: map['imgUrl'],
     );
   }
 

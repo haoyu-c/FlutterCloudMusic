@@ -1,15 +1,23 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:FlutterCloudMusic/music_player/player_widget.dart';
-import 'package:FlutterCloudMusic/util/cmimage.dart';
-import 'package:FlutterCloudMusic/util/cmtext.dart';
+import 'package:FlutterCloudMusic/model/song.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import 'package:FlutterCloudMusic/music_player/player_widget.dart';
+import 'package:FlutterCloudMusic/util/cmimage.dart';
+import 'package:FlutterCloudMusic/util/cmtext.dart';
+
 class MusicPlayerPage extends StatefulWidget {
+  final Song song;
+  const MusicPlayerPage({
+    Key key,
+    this.song,
+  }) : super(key: key);
   @override
   _MusicPlayerPageState createState() => _MusicPlayerPageState();
 }
@@ -17,7 +25,6 @@ class MusicPlayerPage extends StatefulWidget {
 class _MusicPlayerPageState extends State<MusicPlayerPage> {
   AudioCache audioCache = AudioCache();
   AudioPlayer audioPlayer = AudioPlayer();
-
 
   @override
   void initState() { 
@@ -42,7 +49,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
             height: double.infinity,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(CMImage.imageNamed("chengdu", suffix: "jpg")),
+                image: CachedNetworkImageProvider(widget.song.imgUrl),
                 fit: BoxFit.cover,
               )
             ),
@@ -50,7 +57,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(
                 color: Color.fromRGBO(28, 28, 28, 0.73),
-                child: SafeArea(child: PlayerWidget(url: "http://127.0.0.1:8080/api/songs/file/chengdu.mp3")),
+                child: SafeArea(child: PlayerWidget(song: widget.song)),
               ),
             ),
           )
@@ -59,10 +66,10 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     );
   }
   
-  AppBar get appBar {  
+  get appBar {  
     return AppBar(
       title: CMText(
-        text: "成都-赵雷",
+        text: widget.song.name,
         fontSize: 17,
         fontWeight: FontWeight.bold,
         color: Colors.white,

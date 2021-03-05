@@ -1,6 +1,11 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:FlutterCloudMusic/lodable_state.dart';
 import 'package:FlutterCloudMusic/model/playlist.dart';
 import 'package:FlutterCloudMusic/music_player/music_player_page.dart';
@@ -11,26 +16,29 @@ import 'package:FlutterCloudMusic/util/cmcolor.dart';
 import 'package:FlutterCloudMusic/util/cmimage.dart';
 import 'package:FlutterCloudMusic/util/cmtext.dart';
 import 'package:FlutterCloudMusic/util/constants.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PlaylistPage extends StatefulWidget {
+  final Playlist playlist;
+  final String playlistId;
+  const PlaylistPage({
+    Key key,
+    this.playlist,
+    this.playlistId
+  }) : super(key: key);
   @override
   _PlaylistPageState createState() => _PlaylistPageState();
 }
 
 class _PlaylistPageState extends LoadableState<PlaylistPage> {
-  Playlist playlist;
   int selectedIndex;
   @override
   void initState() {
     super.initState();
-    getPlaylist().then((result) {
-      if (result.isSuccess) {
-        playlist = result.result;
-      }
-    });
+    // getPlaylist().then((result) {
+    //   if (result.isSuccess) {
+    //     playlist = result.result;
+    //   }
+    // });
   }
 
   @override
@@ -55,7 +63,7 @@ class _PlaylistPageState extends LoadableState<PlaylistPage> {
               background: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: NetworkImage(playlist.avatarUrl),
+                    image: CachedNetworkImageProvider(widget.playlist.avatarUrl),
                     fit: BoxFit.cover
                   )
                 ),
@@ -81,13 +89,13 @@ class _PlaylistPageState extends LoadableState<PlaylistPage> {
                       setState(() {
                         selectedIndex = index - 1;
                         Navigator.of(context).push(
-                          MaterialPageRoute(builder: (ctx) => MusicPlayerPage())
+                          MaterialPageRoute(builder: (ctx) => MusicPlayerPage(song:  widget.playlist.songs[index-1],))
                         );
                       });
                     },
                     child: Column(
                     children: [
-                      SongRow(index: index, song: playlist.songs[index-1], selected: selectedIndex == (index - 1),),
+                      SongRow(index: index, song: widget.playlist.songs[index-1], selected: selectedIndex == (index - 1),),
                       Divider(
                         color: Color(0x493C3C43),
                         height: 0.3,
@@ -96,27 +104,25 @@ class _PlaylistPageState extends LoadableState<PlaylistPage> {
                   ),
                 );
               },
-              childCount: playlist.songs.length + 1
+              childCount: widget.playlist.songs.length + 1
             ),
           )
         ],
       ),
     );
   }
-
-  // randomColor() => Color(Random().nextInt(0x100000000));
   
-  Future<Result<Playlist, DioError>> getPlaylist() async {
-    isLoading = true;
-    try {
-      final response = await dio.get("api/playlist/sample");
-      return Result.success(Playlist.fromMap(response.data));
-    } on DioError catch (error) {
-      return Result.error(error);
-    } finally {
-      isLoading = false;
-    }
-  }
+  // Future<Result<Playlist, DioError>> getPlaylist() async {
+  //   isLoading = true;
+  //   try {
+  //     final response = await dio.get("api/playlist/sample");
+  //     return Result.success(Playlist.fromMap(response.data));
+  //   } on DioError catch (error) {
+  //     return Result.error(error);
+  //   } finally {
+  //     isLoading = false;
+  //   }
+  // }
 
   final transformScale = 1.5;
 
@@ -157,7 +163,7 @@ class _PlaylistPageState extends LoadableState<PlaylistPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(width: 20 / transformScale),
-            Image.network(playlist.avatarUrl, width: 140 / transformScale, height: 140 / transformScale),
+            CachedNetworkImage(imageUrl: widget.playlist.avatarUrl, width: 140 / transformScale, height: 140 / transformScale),
             SizedBox(width: 10 / transformScale),
             Container(
               height: 140 / transformScale,
@@ -168,7 +174,7 @@ class _PlaylistPageState extends LoadableState<PlaylistPage> {
                   Container(
                     alignment: Alignment.centerLeft,
                     width: (1.sw - 20 - 140 - 10 - 20) / transformScale,
-                    child: CMText(text: playlist.name, color: Colors.white, fontSize: 17 / transformScale),
+                    child: CMText(text: widget.playlist.name, color: Colors.white, fontSize: 17 / transformScale),
                     height: 70 / transformScale,
                   ),
                   Container(
@@ -178,10 +184,10 @@ class _PlaylistPageState extends LoadableState<PlaylistPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         ClipOval(
-                          child: Image.network(playlist.creator.avatarUrl, width: 30 / transformScale, height: 30 / transformScale),
+                          child: CachedNetworkImage(imageUrl: widget.playlist.creator.avatarUrl, width: 30 / transformScale, height: 30 / transformScale),
                         ),
                         SizedBox(width: 10 / transformScale),
-                        CMText(text: playlist.creator.nickname, color: Colors.white, fontSize: 17 / transformScale)
+                        CMText(text: widget.playlist.creator.nickname, color: Colors.white, fontSize: 17 / transformScale)
                       ],
                     ),
                   )
@@ -208,7 +214,7 @@ class _PlaylistPageState extends LoadableState<PlaylistPage> {
           SizedBox(width: 10),
           CMText(text: "播放全部", fontSize: 17,),
           SizedBox(width: 15),
-          CMText(text: "(共${playlist.songs.length}首)", color: CMColor.white(0.67), fontSize: 14,),
+          CMText(text: "(共${widget.playlist.songs.length}首)", color: CMColor.white(0.67), fontSize: 14,),
           Expanded(child: Container()),
           Container(
             color: ColorComponent.red,

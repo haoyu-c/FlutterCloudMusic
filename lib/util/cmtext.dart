@@ -9,6 +9,7 @@ class CMText extends StatelessWidget {
   final Color color;
   final FontWeight fontWeight;
   final TextAlign textAlign;
+  final maxLines;
 
   CMText(
       {@required this.text,
@@ -18,6 +19,7 @@ class CMText extends StatelessWidget {
       this.height,
       this.fontWeight = FontWeight.normal,
       this.textAlign,
+      this.maxLines,
       Key key})
       : super(key: key);
 
@@ -26,6 +28,8 @@ class CMText extends StatelessWidget {
     return Text(
       text,
       textAlign: this.textAlign,
+      maxLines: maxLines,
+      overflow: TextOverflow.ellipsis,
       style: TextStyle(
         decoration: TextDecoration.none,
         fontFamily: this.fontName,

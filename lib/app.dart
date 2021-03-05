@@ -3,6 +3,7 @@ import 'package:FlutterCloudMusic/login/login_page.dart';
 import 'package:FlutterCloudMusic/login/welcome_page.dart';
 import 'package:FlutterCloudMusic/mine/mine_page.dart';
 import 'package:FlutterCloudMusic/music_player/music_player_page.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/screen_util.dart';
@@ -19,6 +20,7 @@ class _AppState extends State<App> {
   var currentIndex = 0;
   @override
   Widget build(BuildContext context) {
+    AudioPlayer.logEnabled = true;
     return ScreenUtilInit(
       designSize: Size(428, 926),
       builder: () {
@@ -70,4 +72,4 @@ final _bottomTabs = () {
       .toList();
 }();
 
-final _tabs = [WelcomePage(), DiscoverPage(), MinePage()];
+final _tabs = [WelcomePage(), DiscoverPage()];

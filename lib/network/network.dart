@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-
-final dio = Dio(BaseOptions(baseUrl: "http://127.0.0.1:8080/"));
+// const baseUrl = "http://127.0.0.1:8080/";
+const baseUrl = "http://193.123.246.233:80/";
+final dio = Dio(BaseOptions(baseUrl: baseUrl));
 
 class NetworkErrorInfo {
   bool error;
