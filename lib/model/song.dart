@@ -7,7 +7,7 @@ class Song {
   Artist artist;
   String songUrl;
   String name;
-  String lyricUrl;
+  String lyricName;
   int duration;
   String imgUrl;
 
@@ -16,7 +16,7 @@ class Song {
     this.artist,
     this.songUrl,
     this.name,
-    this.lyricUrl,
+    this.lyricName,
     this.duration,
     this.imgUrl,
   });
@@ -27,7 +27,7 @@ class Song {
       'artist': artist?.toMap(),
       'songUrl': songUrl,
       'name': name,
-      'lyricUrl': lyricUrl,
+      'lyricName': lyricName,
       'duration': duration,
       'imgUrl': imgUrl,
     };
@@ -39,7 +39,7 @@ class Song {
       'artistId': artist?.id,
       'songUrl': songUrl,
       'name': name,
-      'lyricUrl': lyricUrl,
+      'lyricName': lyricName,
       'duration': duration,
       'imgUrl': imgUrl
     };
@@ -53,7 +53,7 @@ class Song {
       artist: Artist.fromMap(map['artist']),
       songUrl: map['songUrl'],
       name: map['name'],
-      lyricUrl: map['lyricUrl'],
+      lyricName: map['lyricName'],
       duration: map['duration'],
       imgUrl: map['imgUrl'],
     );

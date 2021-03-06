@@ -5,6 +5,7 @@ import 'package:FlutterCloudMusic/util/cmimage.dart';
 import 'package:FlutterCloudMusic/util/cmtext.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:math';
@@ -23,12 +24,13 @@ class PlayerWidget extends StatefulWidget {
   _PlayerWidgetState createState() => _PlayerWidgetState();
 }
 
-class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderStateMixin {
+class _PlayerWidgetState extends State<PlayerWidget> with TickerProviderStateMixin {
   String url;
   AudioPlayer _audioPlayer;
   AudioPlayerState _audioPlayerState;
   Duration _duration;
   Duration _position;
+  bool showLyric;
 
   PlayerState _playerState = PlayerState.stopped;
   StreamSubscription _positionSubscription;
@@ -51,7 +53,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        AnimatedBuilder(animation: control, builder: (ctx, child){
+        AnimatedBuilder(animation: controller1, builder: (ctx, child){
           return buildMusicCircle();
         }),
         Spacer(),
@@ -104,7 +106,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
             left: 20,
             top: 80,
             child: Transform(
-              transform: Matrix4.rotationZ(rotation.value),
+              transform: Matrix4.rotationZ(rotation1.value),
               alignment: Alignment.center,
               child: Stack(
                 alignment: Alignment.center,
@@ -117,10 +119,20 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
               ),
             ),
           ),
-          Align(
-            alignment: Alignment(0.2, -1),
-            child: CMImage.named('cd_thumb', width: 92, height: 138),
-          ), 
+          Positioned(
+            left: 1.sw / 2,
+            top: 60,
+            child: AnimatedBuilder(
+              animation: controller2,
+              builder: (ctx, child) {
+                return Transform(
+                  origin: Offset(0,0),
+                  transform: Matrix4.rotationZ(rotation2.value),
+                  child: CMImage.named('cd_thumb', width: 92, height: 138)
+                );
+              },
+            ),
+          )
         ],
       );
   }
@@ -140,7 +152,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
       left: 20,
       top: 80,
       child: Transform(
-        transform: Matrix4.rotationZ(rotation.value),
+        transform: Matrix4.rotationZ(rotation1.value),
         alignment: Alignment.center,
         child: CMImage.named(imageName, width: 1.sw - 40, height: 1.sw - 40),
       ),
@@ -169,27 +181,40 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
     super.initState();
     _initAudioPlayer();
     _initAnimation();
+    // _getLyric();
   }
 
-  AnimationController control;
-  Animation<double> rotation;
+  AnimationController controller1;
+  Animation<double> rotation1;
+  AnimationController controller2;
+  Animation<double> rotation2;
   _initAnimation() {
-    control = AnimationController(
-      duration: Duration(seconds: 5),
+    controller1 = AnimationController(
+      duration: Duration(seconds: 10),
       vsync: this,
     );
-
-    rotation = Tween<double>(begin: 0, end: 2 * pi).animate(control);
+    rotation1 = Tween<double>(begin: 0, end: 2 * pi).animate(controller1);
+    controller2 = AnimationController(
+      duration: Duration(seconds: 1),
+      vsync: this
+    );
+    rotation2 = Tween<double>(begin: -0.15 * pi, end: - 0.03 * pi).animate(controller2);
   }
 
   _initAudioPlayer() {
     _audioPlayer = AudioPlayer(mode: PlayerMode.MEDIA_PLAYER);
     _duration = Duration(seconds: widget.song.duration);
+    // _audioPlayer.onDurationChanged.listen((d) {
+    //   setState(() {
+    //     _duration = d;
+    //   });
+    // });
     _positionSubscription = _audioPlayer.onAudioPositionChanged.listen((position) {
       setState(() {
         _position = position;
       });
     });
+  
     _playerCompleteSubscription =
         _audioPlayer.onPlayerCompletion.listen((event) {
       _onComplete();
@@ -214,9 +239,11 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
       setState(() {
         _audioPlayerState = state;
         if (state == AudioPlayerState.PLAYING) {
-          control.repeat();
+          controller1.repeat();
+          controller2.forward();
         } else {
-          control.stop();
+          controller1.stop();
+          controller2.reverse();
         }
       });
     });
@@ -233,6 +260,21 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
     setState(() {
       _playerState = PlayerState.stopped;
     });
+  }
+
+  String _lyric;
+
+  _getLyric() async {
+    Response response = await dio.get("api/lyric/" + widget.song.lyricName);
+    if (response.statusCode == 200) {
+      setState(() {
+        _lyric = response.data;
+      });
+    } else {
+      setState(() {
+        _lyric = "未能获取到歌词";
+      });
+    }
   }
 
   Future<int> _play() async {
@@ -255,7 +297,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
   Future<int> _pause() async {
     final result = await _audioPlayer.pause();
     if (result == 1) setState(() => _playerState = PlayerState.paused);
-    control.stop();
+    controller1.stop();
     return result;
   }
 
@@ -267,7 +309,8 @@ class _PlayerWidgetState extends State<PlayerWidget> with SingleTickerProviderSt
     _playerErrorSubscription?.cancel();
     _playerStateSubscription?.cancel();
     _playerControlCommandSubscription?.cancel();
-    control.dispose();
+    controller1.dispose();
+    controller2.dispose();
     super.dispose();
   }
 
