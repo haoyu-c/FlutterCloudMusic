@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:FlutterCloudMusic/discover/home_recommend.dart';
+import 'package:FlutterCloudMusic/model/play_songs_model.dart';
 import 'package:FlutterCloudMusic/music_player/music_player_page.dart';
 import 'package:FlutterCloudMusic/network/Result.dart';
 import 'package:FlutterCloudMusic/playlist/playlist_page.dart';
@@ -17,6 +18,7 @@ import 'package:FlutterCloudMusic/network/network.dart';
 import 'package:FlutterCloudMusic/util/cmcolor.dart';
 import 'package:FlutterCloudMusic/util/cmimage.dart';
 import 'package:FlutterCloudMusic/util/cmtext.dart';
+import 'package:provider/provider.dart';
 
 import 'discover_navigation_bar.dart';
 
@@ -150,6 +152,7 @@ class _DiscoverPageState extends LoadableState<DiscoverPage> {
             ],
           );
           return GestureDetector(
+            behavior: HitTestBehavior.translucent,
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (ctx) => PlaylistPage(playlist: playlist,))
@@ -218,7 +221,11 @@ class _DiscoverPageState extends LoadableState<DiscoverPage> {
       );
       return GestureDetector(
         child: item,
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => MusicPlayerPage(song: song,))),
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => MusicPlayerPage(song: song,)));
+          Provider.of<PlaySongsModel>(context, listen: false).addSongs([song]);
+        },
       );
     },
     itemCount: recommend.songs.length,

@@ -1,9 +1,13 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+
+import 'ErrorInterceptors.dart';
 // const baseUrl = "http://127.0.0.1:8080/";
 const baseUrl = "http://193.123.246.233:80/";
-final dio = Dio(BaseOptions(baseUrl: baseUrl));
+final dio = Dio(BaseOptions(baseUrl: baseUrl))
+..interceptors.add(ErrorInterceptors())
+..interceptors.add(LogInterceptor());
 
 class NetworkErrorInfo {
   bool error;
@@ -22,7 +26,6 @@ class NetworkErrorInfo {
 
   factory NetworkErrorInfo.fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
-
     return NetworkErrorInfo(
       error: map['error'],
       reason: map['reason'],

@@ -13,6 +13,7 @@ class PlaySongsModel with ChangeNotifier {
   int curIndex = 0;
   Duration curSongDuration;
   AudioPlayerState _curState;
+  Duration curSongPosition;
 
   List<Song> get allSongs => _songs;
   Song get curSong => _songs[curIndex];
@@ -30,8 +31,10 @@ class PlaySongsModel with ChangeNotifier {
     });
     _audioPlayer.onDurationChanged.listen((d) {
       curSongDuration = d;
+      notifyListeners();
     });
     _audioPlayer.onAudioPositionChanged.listen((p) { 
+      curSongPosition = p;
       sinkProgress(p.inMilliseconds > curSongDuration.inMilliseconds ? curSongDuration.inMilliseconds : p.inMilliseconds);
     });
   }
@@ -60,9 +63,10 @@ class PlaySongsModel with ChangeNotifier {
     _audioPlayer.play(url);
   }
 
-  void togglePlay(){
-    if (_audioPlayer.state == AudioPlayerState.PAUSED) {
-      resumePlay();
+  void togglePlay() async {
+    
+    if (curState == AudioPlayerState.PAUSED || curState == AudioPlayerState.STOPPED || curState == null) {
+      await _audioPlayer.play(_songs[curIndex].songUrl, position: curSongPosition);
     } else {
       pausePlay();
     }
@@ -82,7 +86,7 @@ class PlaySongsModel with ChangeNotifier {
   }
 
   void nextPlay(){
-    if(curIndex >= _songs.length){
+    if(curIndex >= _songs.length - 1){
       curIndex = 0;
     }else{
       curIndex++;
@@ -99,10 +103,36 @@ class PlaySongsModel with ChangeNotifier {
     play();
   }
 
+  get isPlaying {
+    return _audioPlayer.state == AudioPlayerState.PLAYING;
+  }
+
+  get isPaused {
+    return _audioPlayer.state == AudioPlayerState.PAUSED;
+  }
+
+  get positionText {
+    return toSongDurationString(curSongPosition);
+  }
+
+  get durationText {
+    return toSongDurationString(curSongDuration);
+  }
+
   @override
   void dispose() {
     super.dispose();
     _curPositionController.close();
     _audioPlayer.dispose();
+  }
+
+  String toSongDurationString(Duration duration) {
+    if (duration == null) {
+      return "00:00";
+    }
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return "$twoDigitMinutes:$twoDigitSeconds";
   }
 }
