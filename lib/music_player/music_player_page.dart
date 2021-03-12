@@ -66,7 +66,7 @@ class _MusicPlayerPageState extends State<MusicPlayerPage> {
     );
   }
   
-  get appBar {  
+  get appBar {
     return AppBar(
       title: CMText(
         text: widget.song.name,

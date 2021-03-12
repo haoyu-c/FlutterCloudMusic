@@ -1,13 +1,22 @@
 import 'dart:convert';
 
+import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
 
 import 'ErrorInterceptors.dart';
-// const baseUrl = "http://127.0.0.1:8080/";
-const baseUrl = "http://193.123.246.233:80/";
-final dio = Dio(BaseOptions(baseUrl: baseUrl))
-..interceptors.add(ErrorInterceptors())
-..interceptors.add(LogInterceptor());
+get baseUrl async {
+  final deviceInfo = await DeviceInfoPlugin().iosInfo;
+  if (deviceInfo.isPhysicalDevice) {
+    return "http://193.123.246.233:80/";
+  } else {
+    return "http://127.0.0.1:8080/";
+  }
+}
+get dio async {
+    return Dio(BaseOptions(baseUrl: await baseUrl))
+  ..interceptors.add(ErrorInterceptors())
+  ..interceptors.add(LogInterceptor());
+}
 
 class NetworkErrorInfo {
   bool error;

@@ -111,18 +111,6 @@ class _PlaylistPageState extends LoadableState<PlaylistPage> {
       ),
     );
   }
-  
-  // Future<Result<Playlist, DioError>> getPlaylist() async {
-  //   isLoading = true;
-  //   try {
-  //     final response = await dio.get("api/playlist/sample");
-  //     return Result.success(Playlist.fromMap(response.data));
-  //   } on DioError catch (error) {
-  //     return Result.error(error);
-  //   } finally {
-  //     isLoading = false;
-  //   }
-  // }
 
   final transformScale = 1.5;
 

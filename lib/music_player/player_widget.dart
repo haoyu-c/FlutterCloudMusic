@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:FlutterCloudMusic/component/fade_indexed_stack.dart';
 import 'package:FlutterCloudMusic/model/play_songs_model.dart';
 import 'package:FlutterCloudMusic/model/song.dart';
 import 'package:FlutterCloudMusic/music_player/lyric_page.dart';
@@ -46,7 +47,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with TickerProviderStateMix
               controller1.stop();
               controller2.reverse();
             }
-            final indexedStack = IndexedStack(
+            final indexedStack = FadeIndexedStack(
               index: switchIndex,
               children: [
                 AnimatedBuilder(animation: controller1, builder: (ctx, child){

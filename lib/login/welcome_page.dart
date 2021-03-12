@@ -1,3 +1,4 @@
+import 'package:FlutterCloudMusic/comment/comment_page.dart';
 import 'package:FlutterCloudMusic/login/register_page.dart';
 import 'package:FlutterCloudMusic/music_player/music_player_page.dart';
 import 'package:FlutterCloudMusic/playlist/playlist_page.dart';
@@ -31,7 +32,8 @@ class WelcomePage extends StatelessWidget {
           builder: (context) => ElevatedButton(
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-                  return PlaylistPage();
+                  return CommentPage(songId: "43b82c23-2e83-474f-869d-adb373119fbb");
+                  // return PlaylistPage();
                   // return MusicPlayerPage();
                   // return Scaffold(body: LoginPage());
                 }));
