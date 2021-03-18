@@ -52,4 +52,36 @@ class User {
   String toJson() => json.encode(toMap());
 
   factory User.fromJson(String source) => User.fromMap(json.decode(source));
+
+  @override
+  String toString() {
+    return 'User(id: $id, username: $username, avatarUrl: $avatarUrl, backgroundAvatarUrl: $backgroundAvatarUrl, schema: $schema, nickname: $nickname, followCount: $followCount, followerCount: $followerCount)';
+  }
+
+  @override
+  bool operator ==(Object o) {
+    if (identical(this, o)) return true;
+  
+    return o is User &&
+      o.id == id &&
+      o.username == username &&
+      o.avatarUrl == avatarUrl &&
+      o.backgroundAvatarUrl == backgroundAvatarUrl &&
+      o.schema == schema &&
+      o.nickname == nickname &&
+      o.followCount == followCount &&
+      o.followerCount == followerCount;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+      username.hashCode ^
+      avatarUrl.hashCode ^
+      backgroundAvatarUrl.hashCode ^
+      schema.hashCode ^
+      nickname.hashCode ^
+      followCount.hashCode ^
+      followerCount.hashCode;
+  }
 }

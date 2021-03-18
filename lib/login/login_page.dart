@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:FlutterCloudMusic/component/cmtextformfield.dart';
 import 'package:FlutterCloudMusic/login/token.dart';
+import 'package:FlutterCloudMusic/model/app_state.dart';
 import 'package:FlutterCloudMusic/network/Result.dart';
 import 'package:FlutterCloudMusic/network/network.dart';
+import 'package:FlutterCloudMusic/redux/actions.dart';
 import 'package:FlutterCloudMusic/util/cmimage.dart';
 import 'package:FlutterCloudMusic/util/cmtext.dart';
 import 'package:FlutterCloudMusic/util/constants.dart';
@@ -71,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
         onSaved: (String username) {
           _username = username;
         },
+        initialValue: "chy",
       ),
     );
   }
@@ -89,6 +92,7 @@ class _LoginPageState extends State<LoginPage> {
         onSaved: (String password) {
           _password = password;
         },
+        initialValue: "chypassword",
       ),
     );
   }
@@ -120,15 +124,16 @@ class _LoginPageState extends State<LoginPage> {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      performLogin().then((result) {
-        final snackBarContent = (result.isSuccess)
-            ? "登陆成功"
-            : NetworkErrorInfo.fromError(result.error).reason;
-        final scaffold = Scaffold.of(context);
-        scaffold.showSnackBar(SnackBar(
-          content: Text(snackBarContent),
-        ));
-      });
+      AppState.storeOf(context).dispatch(LoginAction(context: context, password: _password, username: _username));
+      // performLogin().then((result) {
+      //   final snackBarContent = (result.isSuccess)
+      //       ? "登陆成功"
+      //       : NetworkErrorInfo.fromError(result.error).reason;
+      //   final scaffold = Scaffold.of(context);
+      //   scaffold.showSnackBar(SnackBar(
+      //     content: Text(snackBarContent),
+      //   ));
+      // });
     }
   }
 
@@ -145,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
     final basicAuth =
         'Basic ' + base64Encode(utf8.encode('$_username:$_password'));
     try {
-      final response = await dio.post('api/users/login',
+      final response = await (await dio).post('api/users/login',
           options:
               Options(headers: <String, String>{'authorization': basicAuth}));
       isLoading = false;

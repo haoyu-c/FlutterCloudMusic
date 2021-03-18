@@ -38,7 +38,7 @@ class _DiscoverPageState extends LoadableState<DiscoverPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    final scrollView = SingleChildScrollView(
       child: Column(
         children: [
           DiscoverNavigationBar(), 
@@ -49,6 +49,12 @@ class _DiscoverPageState extends LoadableState<DiscoverPage> {
           if (recommend != null) songList
         ],
       ),
+    );
+    return Container(
+      color: Colors.white,
+      height: 1.sh,
+      width: 1.sw,
+      child: scrollView,
     );
   }
 
@@ -113,6 +119,7 @@ class _DiscoverPageState extends LoadableState<DiscoverPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GridView.builder(
+        padding: EdgeInsets.zero,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           crossAxisSpacing: 10,
@@ -231,12 +238,13 @@ class _DiscoverPageState extends LoadableState<DiscoverPage> {
     itemCount: recommend.songs.length,
     physics: NeverScrollableScrollPhysics(),
     shrinkWrap: true,
+    padding: EdgeInsets.zero,
     );
   }
 
   getRecommend() async {
     try {
-      final response = await dio.get('api/home/recommend');
+      final response = await (await dio).get('api/home/recommend');
       final result = Result.success(HomeRecommend.fromMap(response.data));
       if (result.isSuccess) {
         setState(() {
@@ -247,7 +255,6 @@ class _DiscoverPageState extends LoadableState<DiscoverPage> {
       return Result.error(error);
     }
   }
-
 
 }
 

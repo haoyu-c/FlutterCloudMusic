@@ -10,6 +10,7 @@ class CMTextFormField extends StatelessWidget {
   final FormFieldValidator<String> validator;
   final FormFieldSetter<String> onSaved;
   final ValueChanged<String> onChanged;
+  final String initialValue;
 
   const CMTextFormField(
       {Key key,
@@ -21,7 +22,8 @@ class CMTextFormField extends StatelessWidget {
       this.hintText,
       this.validator,
       this.onSaved,
-      this.onChanged})
+      this.onChanged,
+      this.initialValue})
       : super(key: key);
 
   @override
@@ -40,6 +42,7 @@ class CMTextFormField extends StatelessWidget {
       ),
       validator: validator,
       onSaved: onSaved,
+      initialValue: initialValue,
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:FlutterCloudMusic/network/network.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -45,6 +46,7 @@ class _CommentContentState extends State<CommentContent> {
       onSubmitted: (text) {
         if (widget.callback != null) {
           widget.callback(text);
+          Network.postComment({"content": text, "songId": "43b82c23-2e83-474f-869d-adb373119fbb"});
         }
       },
     );
