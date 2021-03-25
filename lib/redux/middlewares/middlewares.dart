@@ -1,3 +1,4 @@
+import 'package:FlutterCloudMusic/entrance/application.dart';
 import 'package:FlutterCloudMusic/login/token.dart';
 import 'package:FlutterCloudMusic/model/account.dart';
 import 'package:FlutterCloudMusic/model/app_state.dart';
@@ -17,12 +18,14 @@ List<Middleware<AppState>> createMiddlewares(
   final accountLogin = _createAccountLogin(handler);
   final saveAccount = _createSaveAccount();
   final getUserInfo = _createGetUserInfo(handler);
-  final loadAccount = _createLoadAccount();
+  final startLoad = _createStartLoad();
   return [
     TypedMiddleware<AppState, LoginAction>(accountLogin),
     TypedMiddleware<AppState, SaveAccountAction>(saveAccount),
     TypedMiddleware<AppState, GetUserInfoAction>(getUserInfo),
-    TypedMiddleware<AppState, AccountLoadAction>(loadAccount)
+    TypedMiddleware<AppState, StartLoadAction>(startLoad),
+    TypedMiddleware<AppState, LightThemeAction>(_changeToLightTheme()),
+    TypedMiddleware<AppState, DarkThemeAction>(_changeToDarkTheme()),
   ];
 }
 
@@ -68,15 +71,34 @@ Middleware<AppState> _createGetUserInfo(AccountHandler handler) {
   };
 }
 
-Middleware<AppState> _createLoadAccount() {
+Middleware<AppState> _createStartLoad() {
   return (Store<AppState> store, action, NextDispatcher next) {
-    SharedPreferences.getInstance().then((prefs) {
-      final tokenJson = prefs.getString("token");
-      if (tokenJson != null) {
-        final token = Token.fromJson(tokenJson);
-        store.dispatch( AccountLoadedAction(token: token) );
-      }
-    });
+    final sp = Application.shared.sp;
+    final tokenJson = sp.getString("token");
+    if (tokenJson != null) {
+      final token = Token.fromJson(tokenJson);
+      store.dispatch( AccountLoadedAction(token: token) );
+    }
+    final isDarkTheme = sp.getBool(Keys.isDarkTheme);
+    if (isDarkTheme == null || isDarkTheme == false) {
+      store.dispatch(LightThemeAction);
+    } else {
+      store.dispatch(DarkThemeAction());
+    }
     next(action);
+  };
+}
+
+Middleware<AppState> _changeToLightTheme() {
+  return (Store<AppState> store, action, NextDispatcher next) {
+    next(action);
+    Application.shared.sp.setBool(Keys.isDarkTheme, false);
+  };
+}
+
+Middleware<AppState> _changeToDarkTheme() {
+  return (Store<AppState> store, action, NextDispatcher next) {
+    next(action);
+    Application.shared.sp.setBool(Keys.isDarkTheme, true);
   };
 }

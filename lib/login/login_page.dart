@@ -150,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
     final basicAuth =
         'Basic ' + base64Encode(utf8.encode('$_username:$_password'));
     try {
-      final response = await (await dio).post('api/users/login',
+      final response = await (await dioFuture).post('api/users/login',
           options:
               Options(headers: <String, String>{'authorization': basicAuth}));
       isLoading = false;

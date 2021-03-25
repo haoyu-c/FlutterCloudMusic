@@ -48,7 +48,7 @@ class RegisterAction {
   });
 }
 
-class AccountLoadAction { }
+class StartLoadAction { }
 
 class AccountLoadedAction {
   Token token;
@@ -70,3 +70,6 @@ class UserInfoLoadedAction {
     this.user,
   });
 }
+
+class LightThemeAction {}
+class DarkThemeAction {}

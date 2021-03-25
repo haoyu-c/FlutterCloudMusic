@@ -64,7 +64,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with TickerProviderStateMix
                     behavior: HitTestBehavior.translucent,
                     onTap: () {
                       setState(() {
-                        switchIndex = ((switchIndex == 0) ? 1 : 0);
+                        switchIndex = 1 - switchIndex;
                       });
                     },
                     child: indexedStack,

@@ -1,15 +1,18 @@
-import 'package:FlutterCloudMusic/model/account.dart';
-import 'package:FlutterCloudMusic/model/user.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
+import 'package:FlutterCloudMusic/model/account.dart';
+import 'package:FlutterCloudMusic/model/user.dart';
+
 class AppState {
   final Account account;
-  final bool isLoading;
+  final ThemeData themeData;
   AppState({
     this.account,
-    this.isLoading = false,
+    this.themeData,
   });
 
   static Store<AppState> storeOf(BuildContext context) {
@@ -21,7 +24,7 @@ class AppState {
   }
 
   @override
-  String toString() => 'AppState(account: $account, isLoading: $isLoading)';
+  String toString() => 'AppState(account: $account, themeData: $themeData)';
 
   @override
   bool operator ==(Object o) {
@@ -29,9 +32,20 @@ class AppState {
   
     return o is AppState &&
       o.account == account &&
-      o.isLoading == isLoading;
+      o.themeData == themeData;
   }
 
   @override
-  int get hashCode => account.hashCode ^ isLoading.hashCode;
+  int get hashCode => account.hashCode ^ themeData.hashCode;
+
+  AppState copyWith({
+    Account account,
+    ThemeData themeData,
+  }) {
+    return AppState(
+      account: account ?? this.account,
+      themeData: themeData ?? this.themeData,
+    );
+  }
+  
 }

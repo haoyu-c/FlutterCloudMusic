@@ -59,7 +59,7 @@ class _LyricPageState extends State<LyricPage> with TickerProviderStateMixin {
   }
 
   getLyricData() async {
-    Response response = await (await dio).get("api/lyric/" + curSong.lyricName);
+    Response response = await (await dioFuture).get("api/lyric/" + curSong.lyricName);
     return response.data;
   }
 

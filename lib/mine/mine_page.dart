@@ -1,3 +1,4 @@
+import 'package:FlutterCloudMusic/entrance/application.dart';
 import 'package:FlutterCloudMusic/entrance/splash_page.dart';
 import 'package:FlutterCloudMusic/model/user.dart';
 import 'package:FlutterCloudMusic/redux/actions.dart';
@@ -37,31 +38,62 @@ class _MinePageState extends State<MinePage> {
 
 
   get listView {
-    return ListView.builder(itemBuilder: (context, index) {
+    final listView = ListView.builder(itemBuilder: (context, index) {
+      Widget cell;
       if (index == 0) {
-        return header;
+        cell = header;
       } else if (index > 0 && index < 2) {
-        return settingRow("夜间模式", () => null);
+        cell = settingRow("夜间模式", () => null);
       } else if (index == 2) {
-        return logout;
+        cell = logout;
       }
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          cell,
+          Divider(
+            color: themeData.separatorColor,
+            height: 1,
+            indent: 32,
+          )
+        ],
+      );
     },
-    itemCount: 3);
+      itemCount: 3,
+      shrinkWrap: true,
+    );
+    return Container(
+      color: themeData.systemGroupedBackgroundColor,
+      width: 1.sw,
+      height: 1.sh,
+      child: listView,
+    );
   }
 
   settingRow(String title, Function() callback) {
-    return GestureDetector(
+    final detector = GestureDetector(
       behavior: HitTestBehavior.translucent,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           20.w,
-          CMText(text: title, fontSize: 17,),
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: CMText(text: title, fontSize: 17)
+          ),
           Spacer(),
-          CupertinoSwitch(value: false, onChanged: (isDart) {}),
+          CupertinoSwitch(value: !appState.themeData.isLight, onChanged: (isDark) {
+            store.dispatch(isDark ? DarkThemeAction() : LightThemeAction());
+            setState(() { });
+            Keys.tabKey.currentState.setState(() {});
+          }),
           20.w
         ],
       ),
+    );
+    return Container(
+      color: themeData.secondarySystemGroupedBackgroundColor,
+      child: detector,
     );
   }
 
@@ -76,7 +108,7 @@ class _MinePageState extends State<MinePage> {
       child: Container(
         height: 50,
         width: 1.sw,
-        color: Colors.white,
+        color: themeData.secondarySystemGroupedBackgroundColor,
         child: Center(
           child: CMText(text: "退出登陆", color: ColorComponent.red, fontSize: 17,)
         ),
@@ -85,7 +117,7 @@ class _MinePageState extends State<MinePage> {
   }
 
   get header {
-    return StoreConnector<AppState, User>(
+    final header = StoreConnector<AppState, User>(
       builder: (context, user) {
         return Column(
           children: [
@@ -136,15 +168,25 @@ class _MinePageState extends State<MinePage> {
       converter: (store) => store.state.account.user,
       distinct: true,
     );
+    return Container(
+      color: themeData.secondarySystemGroupedBackgroundColor,
+      child: header,
+    );
   }
 
   get appBar {
     return AppBar(
       title: CMText(text: "账号"),
       automaticallyImplyLeading: false,
-      backgroundColor: Colors.white,
+      backgroundColor: blackWhiteBg,
       elevation: 0,
-      brightness: Brightness.light,
+      brightness: ThemeDataExtension.appBar(context),
+      bottom: PreferredSize(
+        child: Container(
+          color: themeData.separatorColor,
+          height: 1.0,
+        ),
+        preferredSize: Size.fromHeight(4.0)),
     );
   }
 }

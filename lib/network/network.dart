@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:FlutterCloudMusic/network/Result.dart';
 import 'package:device_info/device_info.dart';
@@ -9,12 +8,12 @@ import 'ErrorInterceptors.dart';
 get baseUrl async {
   final deviceInfo = await DeviceInfoPlugin().iosInfo;
   if (deviceInfo.isPhysicalDevice) {
-    return "http://193.123.246.233:80/";
+    return "http://13.88.217.75:80/";
   } else {
     return "http://127.0.0.1:8080/";
   }
 }
-Future<Dio> get dio async {
+Future<Dio> get dioFuture async {
     return Dio(BaseOptions(baseUrl: await baseUrl))
   ..interceptors.add(ErrorInterceptors())
   ..interceptors.add(LogInterceptor());
@@ -55,7 +54,7 @@ class NetworkErrorInfo {
 class Network {
   static Future<DioError> postComment(Map<String, dynamic> params) async {
     try {
-      await (await dio).post("comments", queryParameters: params);
+      await (await dioFuture).post("comments", queryParameters: params);
       return null;
     } on DioError catch (error) {
       return error;

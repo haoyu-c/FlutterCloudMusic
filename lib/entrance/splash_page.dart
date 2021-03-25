@@ -63,13 +63,12 @@ class SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (!initialized) {
-      _store.dispatch(AccountLoadAction());
+      _store.dispatch(StartLoadAction());
       initialized = true;
     }
   }
 
   Future goPage() async {
-    await Application.shared.init();
     if (_state.account == null || _state.account.token == null)  {
       defaultNavigator.pushNamed(Routes.welcomePage);
     } else {

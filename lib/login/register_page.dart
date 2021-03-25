@@ -186,7 +186,7 @@ class _RegisterPageState extends State<RegisterPage> {
       final infoData =
           RegisterInfo(username: _username, password: _password, email: _email)
               .toMap();
-      final response = await (await dio).post('api/users/signup', data: infoData);
+      final response = await (await dioFuture).post('api/users/signup', data: infoData);
       isLoading = false;
       return Result.success(Token.fromMap(response.data));
     } on DioError catch (error) {

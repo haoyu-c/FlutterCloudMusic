@@ -13,14 +13,14 @@ class AccountHandler {
     CMDialog.showLoadingDialog(action.context);
     final basicAuth =
         'Basic ' + base64Encode(utf8.encode('${action.username}:${action.password}'));
-    final response = await (await dio).post('api/users/login',
+    final response = await (await dioFuture).post('api/users/login',
           options:
               Options(headers: <String, String>{'authorization': basicAuth}));
    return Token.fromMap(response.data);
   }
 
   Future<User> getUserInfo(GetUserInfoAction action) async {
-    final response = await (await dio).get('api/users/' + action.userId,);
+    final response = await (await dioFuture).get('api/users/' + action.userId,);
     return User.fromMap(response.data);
   }
 }

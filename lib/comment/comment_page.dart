@@ -163,7 +163,7 @@ class _CommentPageState extends State<CommentPage> {
 
   getComments() async {
     try {
-      final realDio = await dio;
+      final realDio = await dioFuture;
       final response = await realDio.get('api/comments/' + widget.songId);
       List responseList = response.data;
       comments = responseList.map((e) => Comment.fromMap(e)).toList();

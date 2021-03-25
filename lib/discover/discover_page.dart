@@ -5,6 +5,7 @@ import 'package:FlutterCloudMusic/model/play_songs_model.dart';
 import 'package:FlutterCloudMusic/music_player/music_player_page.dart';
 import 'package:FlutterCloudMusic/network/Result.dart';
 import 'package:FlutterCloudMusic/playlist/playlist_page.dart';
+import 'package:FlutterCloudMusic/redux/reducers/theme_data_reducer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ import 'package:FlutterCloudMusic/util/cmcolor.dart';
 import 'package:FlutterCloudMusic/util/cmimage.dart';
 import 'package:FlutterCloudMusic/util/cmtext.dart';
 import 'package:provider/provider.dart';
-
+import 'package:FlutterCloudMusic/utils.dart';
 import 'discover_navigation_bar.dart';
 
 class DiscoverPage extends StatefulWidget {
@@ -51,7 +52,7 @@ class _DiscoverPageState extends LoadableState<DiscoverPage> {
       ),
     );
     return Container(
-      color: Colors.white,
+      color: themeData.systemBackgroundColor,
       height: 1.sh,
       width: 1.sw,
       child: scrollView,
@@ -78,7 +79,7 @@ class _DiscoverPageState extends LoadableState<DiscoverPage> {
                   Container(
                     child: CMImage.named(images[index]),
                     width: 50,
-                    height: 50,
+                    height: 40,
                   ),
                   CMText(
                     text: texts[index],
@@ -115,7 +116,7 @@ class _DiscoverPageState extends LoadableState<DiscoverPage> {
 
   get playListRecommend {
     double itemWidth = ((1.sw - 60) / 3).floor().toDouble();
-    double itemHeight = itemWidth + 10 + 17 * 2 * 1.7;
+    double itemHeight = itemWidth + 10 + 17 * 2 * 1.75;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GridView.builder(
@@ -244,7 +245,7 @@ class _DiscoverPageState extends LoadableState<DiscoverPage> {
 
   getRecommend() async {
     try {
-      final response = await (await dio).get('api/home/recommend');
+      final response = await (await dioFuture).get('api/home/recommend');
       final result = Result.success(HomeRecommend.fromMap(response.data));
       if (result.isSuccess) {
         setState(() {

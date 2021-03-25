@@ -1,4 +1,6 @@
+import 'package:FlutterCloudMusic/app.dart';
 import 'package:FlutterCloudMusic/util/constants.dart';
+import 'package:FlutterCloudMusic/utils.dart';
 import 'package:flutter/material.dart';
 
 class CMText extends StatelessWidget {
@@ -15,7 +17,7 @@ class CMText extends StatelessWidget {
       {@required this.text,
       this.fontName = pingFangSCRegular,
       this.fontSize,
-      this.color = Colors.black,
+      this.color,
       this.height,
       this.fontWeight = FontWeight.normal,
       this.textAlign,
@@ -36,7 +38,7 @@ class CMText extends StatelessWidget {
         fontSize: this.fontSize,
         height: this.height,
         fontWeight: this.fontWeight,
-        color: this.color
+        color: this.color ?? AppState.of(context).themeData.textTheme.bodyText1.color
       ),
     );
   }
