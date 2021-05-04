@@ -55,7 +55,7 @@ class BottomBarItem {
 final _bottomTabs = () {
   final items = [
     BottomBarItem(imageName: "images/tabbar/tab_discover", title: "发现"),
-    BottomBarItem(imageName: "images/tabbar/tab_discover", title: "动态"),
+    BottomBarItem(imageName: "images/Moments", title: "动态"),
     BottomBarItem(imageName: "images/tabbar/tab_mine", title: "我的")
   ];
   return items

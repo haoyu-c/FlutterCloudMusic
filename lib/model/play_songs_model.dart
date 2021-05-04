@@ -35,6 +35,9 @@ class PlaySongsModel with ChangeNotifier {
     });
     _audioPlayer.onAudioPositionChanged.listen((p) { 
       curSongPosition = p;
+      if (curSongDuration == null) {
+        return;
+      }
       sinkProgress(p.inMilliseconds > curSongDuration.inMilliseconds ? curSongDuration.inMilliseconds : p.inMilliseconds);
     });
   }
@@ -45,7 +48,6 @@ class PlaySongsModel with ChangeNotifier {
 
   playSong(Song song) {
     _songs.insert(curIndex, song);
-    play();
   }
   
   void playSongs(List<Song> songs, {int index}) {
@@ -58,18 +60,61 @@ class PlaySongsModel with ChangeNotifier {
     this._songs.addAll(songs);
   }
 
-  void play() async {
-    var url = _songs[curIndex].songUrl;
-    _audioPlayer.stop();
-    _audioPlayer.play(url);
-  }
 
-  void togglePlay() async {
+  void play() async {
+    if (curSong.isLocal) {
+      _audioPlayer.play(curSong.localPath, isLocal: true, position: curSongPosition);
+    } else {
+      _audioPlayer.play(curSong.songUrl, position: curSongPosition);
+    }
+  }
+  Song prevSong;
+  void playOrPause(Song song) async {
+    if (prevSong != null && prevSong.id != song.id) {
+      clear();
+      if (song.isLocal) {
+        await _audioPlayer.play(song.localPath, isLocal: true, position: curSongPosition);
+      } else {
+        await _audioPlayer.play(song.songUrl, position: curSongPosition);
+      }
+      prevSong = song;
+      return;
+    }
     if (curState == AudioPlayerState.PAUSED || curState == AudioPlayerState.STOPPED || curState == null) {
-      await _audioPlayer.play(_songs[curIndex].songUrl, position: curSongPosition ?? 0);
+      if (song.isLocal) {
+        await _audioPlayer.play(song.localPath, isLocal: true, position: curSongPosition);
+      } else {
+        await _audioPlayer.play(song.songUrl, position: curSongPosition);
+      }
+      prevSong = song;
     } else {
       pausePlay();
     }
+  }
+
+  void playOrNothing(Song song) async {
+    if (prevSong != null && prevSong.id != song.id) {
+      clear();
+      if (song.isLocal) {
+        await _audioPlayer.play(song.localPath, isLocal: true, position: curSongPosition);
+      } else {
+        await _audioPlayer.play(song.songUrl, position: curSongPosition);
+      }
+      prevSong = song;
+      return;
+    }
+    if (curState == AudioPlayerState.PAUSED || curState == AudioPlayerState.STOPPED || curState == null) {
+      if (song.isLocal) {
+        await _audioPlayer.play(song.localPath, isLocal: true, position: curSongPosition);
+      } else {
+        await _audioPlayer.play(song.songUrl, position: curSongPosition);
+      }
+      prevSong = song;
+    }
+  }
+
+  clear() {
+    curSongPosition = Duration(seconds: 0);
   }
 
   void pausePlay() {
