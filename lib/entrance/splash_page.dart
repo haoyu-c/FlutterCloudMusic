@@ -27,6 +27,10 @@ class SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     return _store.state;
   }
 
+  static SplashPageState of(BuildContext context) {
+    return context.findAncestorStateOfType<SplashPageState>();
+  }
+
   @override
   void initState() {
     super.initState();

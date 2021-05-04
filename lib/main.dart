@@ -21,10 +21,10 @@ import 'redux/middlewares/account_handler.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final app = MyApp();
   await Application.shared.init();
-  final playsongsModel = PlaySongsModel()..init();
   List<SingleChildWidget> providers = [
-    ChangeNotifierProvider(create: (_) => playsongsModel),
+    ChangeNotifierProvider(create: (_) => PlaySongsModel()..init()),
   ];
   if (download) {
     await FlutterDownloader.initialize(debug: debug);
@@ -32,7 +32,6 @@ void main() async {
     final provider = ChangeNotifierProvider(create: (_) => downloader);
     providers.add(provider);
   }
-  final app = MyApp();
   final provider = MultiProvider(
     providers: providers,
     child: app,
@@ -42,14 +41,13 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
-  Store<AppState> store = Store<AppState>(
-    appReducer,
-    initialState: AppState(account: Account(), themeData: (Application.shared.sp.getBool(Keys.isDarkTheme) ?? false) ? ThemeData.dark() : ThemeData.light()),
-    middleware: createMiddlewares(AccountHandler())
-  );
-
   @override
   Widget build(BuildContext context) {
+    final store = Store<AppState>(
+      appReducer,
+      initialState: AppState(account: Account(), themeData: (Application.shared.sp.getBool(Keys.isDarkTheme) ?? false) ? ThemeData.dark() : ThemeData.light()),
+      middleware: createMiddlewares(AccountHandler())
+    );
     final app = MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Cloud Music',

@@ -1,5 +1,4 @@
 import 'package:FlutterCloudMusic/entrance/application.dart';
-import 'package:FlutterCloudMusic/model/song.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:isolate';
@@ -25,7 +24,7 @@ class Downloader extends ChangeNotifier {
     if (download) {
       _bindBackgroundIsolate();
       await _prepare();
-      await refreshDownloadTask();
+      await _refreshDownloadTask();
       FlutterDownloader.registerCallback(downloadCallback);
     }
   }
@@ -51,11 +50,6 @@ class Downloader extends ChangeNotifier {
           task.progress = progress;
         }
       }
-      if (progress == 100) {
-        Future.delayed(Duration(milliseconds: 200), () {
-          refreshDownloadTask();
-        });
-      }
       notifyListeners();
     });
   }
@@ -77,9 +71,7 @@ class Downloader extends ChangeNotifier {
     return false;
   }
 
-  void requestDownloadSong(Song song) async {
-    String name = song.name;
-    String url = song.songUrl;
+  void requestDownload({String name, String url}) async {
     TaskInfo task = TaskInfo(name: name ?? "无名", url: url);
     task.taskId = await FlutterDownloader.enqueue(
         url: task.url,
@@ -88,16 +80,15 @@ class Downloader extends ChangeNotifier {
         showNotification: true,
         openFileFromNotification: true);
     _tasks.add(task);
-    Application.shared.sp.setString(task.taskId, song.toJson());
-    refreshDownloadTask();
+    Application.shared.sp.setString(task.taskId, task.name);
+    _refreshDownloadTask();
     notifyListeners();
   }
 
-  void delete(TaskInfo task) async {
+  void _delete(TaskInfo task) async {
     await FlutterDownloader.remove(
         taskId: task.taskId, shouldDeleteContent: true);
     Application.shared.sp.remove(task.taskId);
-    refreshDownloadTask();
     notifyListeners();
   }
 
@@ -121,23 +112,12 @@ class Downloader extends ChangeNotifier {
     }
   }
 
-  DownloadTaskStatus statusOf(Song song) {
-    TaskInfo task = _tasks.firstWhere((task) => task.song.name == song.name, orElse: () {
-      return null;
-    });
-    if (task == null) {
-      return null;
-    }
-    return task.status;
-  }
-
-  refreshDownloadTask() async {
+  _refreshDownloadTask() async {
     final tasks = await FlutterDownloader.loadTasks();
     this._tasks = tasks.map((task) {
       String taskId = task.taskId;
-      String json = Application.shared.sp.getString(taskId);
-      Song song = Song.fromJson(json);
-      TaskInfo info = TaskInfo(name: song.name,url: task.taskId);
+      String name = Application.shared.sp.getString(taskId);
+      TaskInfo info = TaskInfo(name: name,url: task.taskId);
       info.taskId = task.taskId;
       info.filename = task.filename;
       info.progress = task.progress;
@@ -167,8 +147,4 @@ class TaskInfo {
   String savedDir;
   int timeCreated;
   TaskInfo({this.name, this.url});
-  Song get song {
-    final songJson = Application.shared.sp.getString(taskId);
-    return Song.fromJson(songJson);
-  }
 }

@@ -33,8 +33,8 @@ class _LyricPageState extends State<LyricPage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    curSongId = widget.model.prevSong.id;
-    curSong = widget.model.prevSong;
+    curSongId = widget.model.curSong.id;
+      curSong = widget.model.curSong;
     WidgetsBinding.instance.addPostFrameCallback((call) {
       _request();
     });
@@ -51,9 +51,6 @@ class _LyricPageState extends State<LyricPage> with TickerProviderStateMixin {
   void _request() async {
     _lyricData =
         await getLyricData();
-    if (_lyricData == null) {
-      return;
-    }
     setState(() {
       lyrics = Lyric.fromatLyricString(_lyricData);
       _lyricWidget = LyricWidget(lyrics, 0);

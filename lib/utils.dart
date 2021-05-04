@@ -20,4 +20,3 @@ export 'package:intl/intl.dart';
 export 'package:cached_network_image/cached_network_image.dart';
 export 'package:flutter_downloader/flutter_downloader.dart';
 export 'package:provider/provider.dart';
-export 'package:flutter_slidable/flutter_slidable.dart';

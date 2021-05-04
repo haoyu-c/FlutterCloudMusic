@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:FlutterCloudMusic/model/artist.dart';
-import 'package:FlutterCloudMusic/util/downloader.dart';
-import 'package:FlutterCloudMusic/utils.dart';
 
 class Song {
   String id;
@@ -12,10 +10,6 @@ class Song {
   String lyricName;
   int duration;
   String imgUrl;
-  String localPath;
-  bool get isLocal  {
-    return !(localPath == null || localPath == "");
-  }
 
   Song({
     this.id,
