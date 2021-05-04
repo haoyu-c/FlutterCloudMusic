@@ -77,13 +77,13 @@ class _PlayerWidgetState extends State<PlayerWidget> with TickerProviderStateMix
                   children: [
                     icon("ic_like", 54),
                     icon("ic_music_previous", 71),
-                    if (!model.isPlaying) icon("ic_music_play", 73, model.togglePlay) else icon("ic_music_pause", 73, model.togglePlay),
+                    if (!model.isPlaying) icon("ic_music_play", 73, () {model.playOrPause(widget.song);}) else icon("ic_music_pause", 73, () {model.playOrPause(widget.song);}),
                     icon("ic_music_next", 51),
                     Expanded(
                       child: GestureDetector(
-                        child: Icon(Icons.file_download, color: Colors.white,),
+                        child: Icon(downloadIcon, color: Colors.white,),
                         onTap: () {
-                          context.read<Downloader>().requestDownload(name: widget.song.name, url: widget.song.songUrl);
+                          context.read<Downloader>().requestDownloadSong(widget.song);
                         } ,
                       )
                     )
@@ -133,6 +133,14 @@ class _PlayerWidgetState extends State<PlayerWidget> with TickerProviderStateMix
             return column;
           },
     );
+  }
+
+  IconData get downloadIcon {
+    DownloadTaskStatus status = context.read<Downloader>().statusOf(widget.song);
+    if (status == DownloadTaskStatus.complete) {
+      return Icons.download_done_outlined;
+    }
+    return Icons.file_download;
   }
 
   Stack buildMusicCircle() {
@@ -213,6 +221,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with TickerProviderStateMix
   @override
   void initState() {
     super.initState();
+    context.read<PlaySongsModel>().playOrNothing(widget.song);
     _initAnimation();
   }
 

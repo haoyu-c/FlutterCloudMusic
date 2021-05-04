@@ -125,15 +125,14 @@ class _LoginPageState extends State<LoginPage> {
     if (form.validate()) {
       form.save();
       AppState.storeOf(context).dispatch(LoginAction(context: context, password: _password, username: _username));
-      // performLogin().then((result) {
-      //   final snackBarContent = (result.isSuccess)
-      //       ? "登陆成功"
-      //       : NetworkErrorInfo.fromError(result.error).reason;
-      //   final scaffold = Scaffold.of(context);
-      //   scaffold.showSnackBar(SnackBar(
-      //     content: Text(snackBarContent),
-      //   ));
-      // });
+      performLogin().then((result) {
+        final snackBarContent = (result.isSuccess)
+            ? "登陆成功"
+            : NetworkErrorInfo.fromError(result.error).reason;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(snackBarContent),
+        ));
+      });
     }
   }
 

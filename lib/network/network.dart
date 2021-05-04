@@ -3,7 +3,17 @@ import 'dart:convert';
 import 'package:FlutterCloudMusic/network/Result.dart';
 import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
+import 'dart:io' show Platform;
 get baseUrl async {
+  if (Platform.isAndroid) {
+    // final deviceInfo = await DeviceInfoPlugin().androidInfo;
+    // if (deviceInfo.isPhysicalDevice) {
+    //   return "http://13.88.217.75:80/";
+    // } else {
+    //   return "http://10.0.2.2:8080/";
+    // }
+    return "http://13.88.217.75:80/";
+  }
   final deviceInfo = await DeviceInfoPlugin().iosInfo;
   if (deviceInfo.isPhysicalDevice) {
     return "http://13.88.217.75:80/";

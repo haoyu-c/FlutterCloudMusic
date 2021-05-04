@@ -23,18 +23,10 @@ class MusicPlayerPage extends StatefulWidget {
 }
 
 class _MusicPlayerPageState extends State<MusicPlayerPage> {
-  AudioCache audioCache = AudioCache();
-  AudioPlayer audioPlayer = AudioPlayer();
 
   @override
   void initState() { 
     super.initState();
-    if (Platform.isIOS) {
-      // if (audioCache.fixedPlayer != null) {
-      //   audioCache.fixedPlayer.startHeadlessService();
-      // }
-      // audioPlayer.startHeadlessService();
-    }
   }
 
   @override
