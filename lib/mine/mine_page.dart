@@ -1,3 +1,4 @@
+import 'package:FlutterCloudMusic/dowload/download_page.dart';
 import 'package:FlutterCloudMusic/entrance/application.dart';
 import 'package:FlutterCloudMusic/entrance/splash_page.dart';
 import 'package:FlutterCloudMusic/model/user.dart';
@@ -21,7 +22,7 @@ class _MinePageState extends State<MinePage> {
         appBar: appBar,
         body: listView
       ),
-      onWillPop: () async => false,
+      onWillPop: () async => true,
     );
   }
 
@@ -43,8 +44,10 @@ class _MinePageState extends State<MinePage> {
       if (index == 0) {
         cell = header;
       } else if (index > 0 && index < 2) {
-        cell = settingRow("夜间模式", () => null);
+        cell = appearanceSetting("夜间模式", () => null);
       } else if (index == 2) {
+        cell = downloadSetting;
+      } else {
         cell = logout;
       }
       return Column(
@@ -59,7 +62,7 @@ class _MinePageState extends State<MinePage> {
         ],
       );
     },
-      itemCount: 3,
+      itemCount: 4,
       shrinkWrap: true,
     );
     return Container(
@@ -70,7 +73,7 @@ class _MinePageState extends State<MinePage> {
     );
   }
 
-  settingRow(String title, Function() callback) {
+  appearanceSetting(String title, Function() callback) {
     final detector = GestureDetector(
       behavior: HitTestBehavior.translucent,
       child: Row(
@@ -88,6 +91,32 @@ class _MinePageState extends State<MinePage> {
             Keys.tabKey.currentState.setState(() {});
           }),
           20.w
+        ],
+      ),
+    );
+    return Container(
+      color: themeData.secondarySystemGroupedBackgroundColor,
+      child: detector,
+    );
+  }
+
+  Widget get downloadSetting  {
+    final detector = GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
+          return DownloadPage();
+        }));
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          20.w,
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: CMText(text: "下载管理", fontSize: 17)
+          ),
+          Spacer(),
         ],
       ),
     );

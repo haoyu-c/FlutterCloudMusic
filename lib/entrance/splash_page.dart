@@ -38,6 +38,7 @@ class SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     _scaleTween = Tween(begin: 0, end: 1);
     _logoController = AnimationController(vsync: this, duration: Duration(milliseconds: 500))
       ..drive(_scaleTween);
+    _scaleTween.chain(CurveTween(curve: Curves.easeIn));
     // 从 0 到 1 的动画曲线
     _logoAnimation = CurvedAnimation(parent: _logoController, curve: Curves.easeOutQuart);
     _logoController.addStatusListener((status) {

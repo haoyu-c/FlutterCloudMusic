@@ -2,6 +2,7 @@ import 'package:FlutterCloudMusic/discover/discover_page.dart';
 import 'package:FlutterCloudMusic/login/welcome_page.dart';
 import 'package:FlutterCloudMusic/mine/mine_page.dart';
 import 'package:FlutterCloudMusic/model/app_state.dart';
+import 'package:FlutterCloudMusic/moments/moments_feed_page.dart';
 import 'package:FlutterCloudMusic/util/cmtext.dart';
 import 'package:FlutterCloudMusic/utils.dart';
 import 'package:flutter/material.dart';
@@ -54,16 +55,17 @@ class BottomBarItem {
 final _bottomTabs = () {
   final items = [
     BottomBarItem(imageName: "images/tabbar/tab_discover", title: "发现"),
+    BottomBarItem(imageName: "images/tabbar/tab_discover", title: "动态"),
     BottomBarItem(imageName: "images/tabbar/tab_mine", title: "我的")
   ];
   return items
       .map((item) => BottomNavigationBarItem(
           icon: Container(
-              child: Image.asset(item.imageName + "_normal.png"),
+              child: Image.asset(item.imageName + "_normal.png",),
               width: 35,
               height: 35),
           activeIcon: Container(
-              child: Image.asset(item.imageName + "_active.png"),
+              child: Image.asset(item.imageName + "_normal.png", color: ColorComponent.red,),
               width: 35,
               height: 35),
           label: item.title))
@@ -75,5 +77,5 @@ List<Widget> _tabs(BuildContext context) {
   return [AnnotatedRegion<SystemUiOverlayStyle>(
     child: DiscoverPage(),
     value: SystemUiOverlayStyle(statusBarBrightness: brightness),
-  ), MinePage()];
+  ), MomentsFeedPage(), MinePage()];
 }

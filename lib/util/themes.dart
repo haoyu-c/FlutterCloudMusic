@@ -60,8 +60,6 @@ extension ThemeDataExtension on ThemeData {
     return isLight ? RGBAColor(light) : RGBAColor(dark);
   }
 
-
-
 }
 
 int transform2ARGB(int value) {

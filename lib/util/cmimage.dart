@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CMImage {
   static Image named(String name,
-      {String suffix, double width, double height, Color color}) {
+      {String suffix, double width, double height, Color color, BoxFit fit}) {
     String imageName;
     if (suffix == null) {
       imageName = "$name.png";
@@ -10,7 +10,7 @@ class CMImage {
       imageName = "$name.$suffix";
     }
     return Image.asset("images/$imageName",
-        width: width, height: height, color: color);
+        width: width, height: height, color: color, fit: fit);
   }
 
   static String imageNamed(String name, {String suffix}) {

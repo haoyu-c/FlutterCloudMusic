@@ -60,13 +60,13 @@ class PlaySongsModel with ChangeNotifier {
 
   void play() async {
     var url = _songs[curIndex].songUrl;
+    _audioPlayer.stop();
     _audioPlayer.play(url);
   }
 
   void togglePlay() async {
-    
     if (curState == AudioPlayerState.PAUSED || curState == AudioPlayerState.STOPPED || curState == null) {
-      await _audioPlayer.play(_songs[curIndex].songUrl, position: curSongPosition);
+      await _audioPlayer.play(_songs[curIndex].songUrl, position: curSongPosition ?? 0);
     } else {
       pausePlay();
     }

@@ -34,11 +34,6 @@ class _PlaylistPageState extends LoadableState<PlaylistPage> {
   @override
   void initState() {
     super.initState();
-    // getPlaylist().then((result) {
-    //   if (result.isSuccess) {
-    //     playlist = result.result;
-    //   }
-    // });
   }
 
   @override

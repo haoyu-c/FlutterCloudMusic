@@ -8,6 +8,8 @@ import 'package:FlutterCloudMusic/network/network.dart';
 import 'package:FlutterCloudMusic/util/cmcolor.dart';
 import 'package:FlutterCloudMusic/util/cmimage.dart';
 import 'package:FlutterCloudMusic/util/cmtext.dart';
+import 'package:FlutterCloudMusic/util/downloader.dart';
+import 'package:FlutterCloudMusic/utils.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
@@ -77,7 +79,14 @@ class _PlayerWidgetState extends State<PlayerWidget> with TickerProviderStateMix
                     icon("ic_music_previous", 71),
                     if (!model.isPlaying) icon("ic_music_play", 73, model.togglePlay) else icon("ic_music_pause", 73, model.togglePlay),
                     icon("ic_music_next", 51),
-                    icon("ic_music_more", 54),
+                    Expanded(
+                      child: GestureDetector(
+                        child: Icon(Icons.file_download, color: Colors.white,),
+                        onTap: () {
+                          context.read<Downloader>().requestDownload(name: widget.song.name, url: widget.song.songUrl);
+                        } ,
+                      )
+                    )
                   ]
                 ),
                 Row(
@@ -132,7 +141,7 @@ class _PlayerWidgetState extends State<PlayerWidget> with TickerProviderStateMix
           Container(
             color: Colors.transparent,
             width: 1.sw,
-            height: 600.h,
+            height: 600.sh,
           ),
           positionedImage("record_background_border"),
           Positioned(

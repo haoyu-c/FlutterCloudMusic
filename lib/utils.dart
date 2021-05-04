@@ -16,3 +16,7 @@ export 'package:redux/redux.dart';
 export 'package:flutter_redux/flutter_redux.dart';
 export 'model/app_state.dart';
 export 'redux/actions.dart';
+export 'package:intl/intl.dart';
+export 'package:cached_network_image/cached_network_image.dart';
+export 'package:flutter_downloader/flutter_downloader.dart';
+export 'package:provider/provider.dart';
