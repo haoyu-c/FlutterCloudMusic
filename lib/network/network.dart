@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:FlutterCloudMusic/network/Result.dart';
 import 'package:device_info/device_info.dart';
 import 'package:dio/dio.dart';
-
-import 'ErrorInterceptors.dart';
 get baseUrl async {
   final deviceInfo = await DeviceInfoPlugin().iosInfo;
   if (deviceInfo.isPhysicalDevice) {
@@ -15,7 +13,6 @@ get baseUrl async {
 }
 Future<Dio> get dioFuture async {
     return Dio(BaseOptions(baseUrl: await baseUrl))
-  ..interceptors.add(ErrorInterceptors())
   ..interceptors.add(LogInterceptor());
 }
 

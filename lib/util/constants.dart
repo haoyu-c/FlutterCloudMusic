@@ -14,4 +14,4 @@ const String pingFangSCRegular = "PingFangSC-Regular";
 const String pingFangSCBold = "PingFangSC-Bold";
 
 const debug = true;
-const download = false;
+const download = true;

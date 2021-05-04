@@ -4,8 +4,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:flutter_screenutil/screen_util.dart';
-import 'package:flutter_screenutil/screenutil_init.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:redux/redux.dart';
 
 import 'package:FlutterCloudMusic/discover/discover_page.dart';

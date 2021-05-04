@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 
 import 'lyric.dart';
 import 'lyric_widget.dart';
-import 'package:flutter_screenutil/screen_util.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LyricPage extends StatefulWidget {
