@@ -21,7 +21,6 @@ class PlaySongsModel with ChangeNotifier {
   AudioPlayerState get curState => _curState;
 
   void init() {
-    _audioPlayer.setReleaseMode(ReleaseMode.STOP);
     _audioPlayer.onPlayerStateChanged.listen((state) {
       _curState = state;
       if (state == AudioPlayerState.COMPLETED) {

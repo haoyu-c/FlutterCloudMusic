@@ -34,10 +34,6 @@ class Downloader extends ChangeNotifier {
   void _bindBackgroundIsolate() {
     bool isSuccess = IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');
-    if (!isSuccess) {
-      _bindBackgroundIsolate();
-      return;
-    }
     _port.listen((dynamic data) {
       print('UI Isolate Callback: $data');
       String id = data[0];

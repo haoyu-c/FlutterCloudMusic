@@ -50,12 +50,12 @@ class _PlayerWidgetState extends State<PlayerWidget> with TickerProviderStateMix
               controller2.reverse();
             }
             final indexedStack = FadeIndexedStack(
-              index: switchIndex,
+              index: 0,
               children: [
                 AnimatedBuilder(animation: controller1, builder: (ctx, child){
                   return buildMusicCircle();
                 }),
-                LyricPage(model)
+                // LyricPage(model)
               ],
             );
             final column = Column(
